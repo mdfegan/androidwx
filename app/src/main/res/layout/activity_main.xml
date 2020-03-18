@@ -25,7 +25,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:onClick="GetLocation"
+        android:onClick="getWeather"
         android:text="@string/req_wx"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -34,8 +34,8 @@
 
     <TextView
         android:id="@+id/FML"
-        android:layout_width="329dp"
-        android:layout_height="30dp"
+        android:layout_width="327dp"
+        android:layout_height="609dp"
         android:layout_marginTop="16dp"
         android:text="@string/your_loc"
         app:layout_constraintEnd_toEndOf="parent"

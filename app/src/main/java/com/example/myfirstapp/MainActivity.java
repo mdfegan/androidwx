@@ -13,13 +13,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import org.json.*;
 
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -31,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
     private FusedLocationProviderClient fusedLocationClient;
-    RequestQueue queue = Volley.newRequestQueue(this);
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void GetLocation(View view){
         setContentView(R.layout.activity_main);
-
+        final TextView box = findViewById(R.id.FML);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -66,18 +68,41 @@ public class MainActivity extends AppCompatActivity {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-
+                            String lat = Double.toString(location.getLatitude());
+                            String lon = Double.toString(location.getLongitude());
+                            String accuracy = Float.toString(location.getAccuracy());
+                            box.setText("lat = " + lat + " Lon = " + lon + " Accuracy: " + accuracy);
                             };
 
                         }
-                    TextView box = findViewById(R.id.FML);
-
-
 
                 });
     }
 
     public void getWeather(View view){
-        
+        setContentView(R.layout.activity_main);
+        final TextView textBox = findViewById(R.id.FML);
+
+        //set up the requestqueue
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://www.google.com";
+
+// Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        textBox.setText("Response is: "+ response.substring(0,500));
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                textBox.setText("That didn't work!");
+            }
+        });
+
+// Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 }
