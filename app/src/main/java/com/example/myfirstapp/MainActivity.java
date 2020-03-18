@@ -16,6 +16,7 @@ import android.widget.EditText;
 import org.json.*;
 
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,11 +28,20 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    public static String lat = null;
+    public static String lon = null;
+    public static String acc = null;
+    public String newurl = null;
+
 
     private FusedLocationProviderClient fusedLocationClient;
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         TextView weatherBox;
         weatherBox = (TextView) findViewById(R.id.FML);
+
 
     }
 
@@ -52,8 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void GetLocation(View view){
+
         setContentView(R.layout.activity_main);
         final TextView box = findViewById(R.id.FML);
+
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -68,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            String lat = Double.toString(location.getLatitude());
-                            String lon = Double.toString(location.getLongitude());
-                            String accuracy = Float.toString(location.getAccuracy());
-                            box.setText("lat = " + lat + " Lon = " + lon + " Accuracy: " + accuracy);
+                            lat = Double.toString(location.getLatitude());
+                            lon = Double.toString(location.getLongitude());
+                            acc = Float.toString(location.getAccuracy());
+
                             };
 
                         }
@@ -80,20 +94,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getWeather(View view){
+
         setContentView(R.layout.activity_main);
         final TextView textBox = findViewById(R.id.FML);
 
+
         //set up the requestqueue
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://www.google.com";
 
-// Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        String initialurl =("https://api.weather.gov/points/" + lat + "," + lon);
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, initialurl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        textBox.setText("Response is: "+ response.substring(0,500));
+
+                        try {
+                            JSONObject obj = new JSONObject(response);
+
+
+                            newurl = obj.getJSONObject("properties").getString("forecast");
+                            textBox.setText(newurl);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -102,7 +130,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
+
+        }
+
     }
-}
+
