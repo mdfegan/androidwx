@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject obj = new JSONObject(response).getJSONObject("properties");
                     JSONArray arr = obj.getJSONArray("periods");
-                    obj = arr.getJSONObject(1);
+                    obj = arr.getJSONObject(0);
                     String forecast = obj.getString("detailedForecast");
                     textBox.setText(forecast);
                 } catch (JSONException e) {
