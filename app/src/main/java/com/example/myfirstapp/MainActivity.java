@@ -43,23 +43,8 @@ public class MainActivity extends AppCompatActivity {
     public JSONObject wholeResponse = null;
 
     private FusedLocationProviderClient fusedLocationClient;
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        setContentView(R.layout.activity_main);
-        //TextView weatherBox;
-        //weatherBox = (TextView) findViewById(R.id.longForecastView);
-    }
 
-    //called when the user taps the send button
-    public void sendMessage(View view){
-        //do something after the button gets tapped.
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        startActivity(intent);
-    }
-
-
-    public void GetLocation(View view){
+    public void GetLocation(){
 
         setContentView(R.layout.activity_main);
         final TextView box = findViewById(R.id.longForecastView);
@@ -83,20 +68,39 @@ public class MainActivity extends AppCompatActivity {
                             lon = Double.toString(location.getLongitude());
                             acc = Float.toString(location.getAccuracy());
 
-                            };
+                        };
 
-                        }
+                    }
 
                 });
     }
 
 
-    private String getForcastByLocation(String lat, String lon){
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        setContentView(R.layout.activity_main);
+        GetLocation();
+
+    }
+
+    //called when the user taps the send button
+    public void sendMessage(View view){
+        //do something after the button gets tapped.
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        startActivity(intent);
+    }
+
+
+
+
+    private JSONObject getForcastByLocation(String lat, String lon){
         // Create a temporary request queue; it will be destroyed when this function exists, but
         // that's okay because we'll block until each request is completed using RequestFuture.get()
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        String forecast = "";
+        JSONObject wholeResponse = null;
 
 
         // Create request #1 (Get the points URL for a given Lat/Lon)
@@ -125,23 +129,50 @@ public class MainActivity extends AppCompatActivity {
             // get() is a blocking call (meaning, it won't return until it finishes, or throws an exception)
             JSONObject obj = future.get();
             // Parse the JSON response to pull out the forecast details
-            forecast = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("detailedForecast");
             wholeResponse = obj;
-            name = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name");
+/*            name = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name");
             temperature = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
             windSpeed = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windSpeed");
             windDirection = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windDirection");
             isDay = Boolean.parseBoolean(obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name"));
-            presentConditions = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("shortForecast");
+            presentConditions = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("shortForecast");*/
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        }
+        return wholeResponse;
+    }
+
+    private String getLongForecast(JSONObject obj){
+        String longForecast = "Error";
+        try {
+            longForecast = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("detailedForecast");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return forecast;
+        return longForecast;
+    }
+
+    private String getConditions(JSONObject obj){
+        String conditions = "Error";
+        try {
+            conditions = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("shortForecast");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return conditions;
+    }
+
+    private String getTemp(JSONObject obj){
+        String temperature = "Error";
+        try {
+            temperature = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return temperature;
     }
 
     public void getWeather(View view) {
@@ -150,14 +181,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final TextView longForecastView = findViewById(R.id.longForecastView);
+                final TextView shortForecastView = findViewById(R.id.shortForecastView);
+                final TextView tempView = findViewById(R.id.tempView);
 
                 // Test values for my dumb emulator
                 //lat = "39.745";
                 //lon = "-97.089";
 
                 // Get the forecast and populate the text box within the thread
-                String forecast = getForcastByLocation(lat, lon);
-                longForecastView.setText(forecast);
+                JSONObject forecast = getForcastByLocation(lat, lon);
+                String detailedForecast = getLongForecast(forecast);
+                String shortForecast = getConditions(forecast);
+                String temp = getTemp(forecast);
+                //longForecastView.setText(forecast.getJSONObject());
+                longForecastView.setText(detailedForecast);
+                shortForecastView.setText(shortForecast);
+                tempView.setText(temp);
 
             }
         });
