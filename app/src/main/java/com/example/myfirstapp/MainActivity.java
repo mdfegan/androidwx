@@ -146,17 +146,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void getWeather(View view) {
 
-        setContentView(R.layout.activity_main);
-        final TextView longForecastView = findViewById(R.id.longForecastView);
-        final TextView conditionsView = findViewById(R.id.shortForecastView);
-        final TextView nameView = findViewById(R.id.nameView);
-        final TextView temperatureView = findViewById(R.id.tempView);
+
 
 
         // Define a temporary thread to handle the weather query in the background
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                setContentView(R.layout.activity_main);
+                final TextView longForecastView = findViewById(R.id.longForecastView);
+                final TextView conditionsView = findViewById(R.id.shortForecastView);
+                final TextView nameView = findViewById(R.id.nameView);
+                final TextView temperatureView = findViewById(R.id.tempView);
                 // Test values for my dumb emulator
                 //lat = "39.745";
                 //lon = "-97.089";
