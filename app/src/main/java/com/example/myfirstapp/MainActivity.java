@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public String windSpeed = null;
     public String windDirection = null;
     public String presentConditions = null;
+    public JSONObject wholeResponse = null;
 
     private FusedLocationProviderClient fusedLocationClient;
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             JSONObject obj = future.get();
             // Parse the JSON response to pull out the forecast details
             forecast = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("detailedForecast");
+            wholeResponse = obj;
             name = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name");
             temperature = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
             windSpeed = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windSpeed");
@@ -161,6 +163,13 @@ public class MainActivity extends AppCompatActivity {
 
                 // Get the forecast and populate the text box within the thread
                 String forecast = getForcastByLocation(lat, lon);
+                String temp = null;
+                try {
+                    temp = wholeResponse.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                temperatureView.setText(temp);
                 longForecastView.setText(forecast);
                 //nameView.setText(name);
                 //temperatureView.setText(temperature);
