@@ -133,12 +133,13 @@ public class MainActivity extends AppCompatActivity {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
         StringRequest secondRequest = new StringRequest(Request.Method.GET, newurl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONObject obj = new JSONObject(response);
-                    JSONArray arr = obj.getJSONArray("period");
+                    JSONArray arr = obj.getJSONArray("periods");
                     obj = arr.getJSONObject(1);
                     String forecast = obj.getString("detailedForecast");
                     textBox.setText(forecast);
@@ -153,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 textBox.setText("That didn't work!");
             }
         });
-        
+        queue.add(secondRequest);
+
 
         }
 
