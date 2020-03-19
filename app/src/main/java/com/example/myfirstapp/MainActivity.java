@@ -11,29 +11,22 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+
 import org.json.*;
 
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
@@ -41,17 +34,20 @@ public class MainActivity extends AppCompatActivity {
     public static String lon = null;
     public static String acc = null;
     public String newurl = null;
-
+    public String name = null;
+    public Boolean isDay = null;
+    public String temperature = null;
+    public String windSpeed = null;
+    public String windDirection = null;
+    public String presentConditions = null;
 
     private FusedLocationProviderClient fusedLocationClient;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setContentView(R.layout.activity_main);
-        TextView weatherBox;
-        weatherBox = (TextView) findViewById(R.id.FML);
-
-
+        //TextView weatherBox;
+        //weatherBox = (TextView) findViewById(R.id.longForecastView);
     }
 
     //called when the user taps the send button
@@ -65,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public void GetLocation(View view){
 
         setContentView(R.layout.activity_main);
-        final TextView box = findViewById(R.id.FML);
+        final TextView box = findViewById(R.id.longForecastView);
 
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -93,74 +89,87 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void getWeather(View view){
 
-        setContentView(R.layout.activity_main);
-        final TextView textBox = findViewById(R.id.FML);
-
-
-        //set up the requestqueue
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String initialurl =("https://api.weather.gov/points/" + lat + "," + lon);
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, initialurl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-
-                        try {
-                            JSONObject obj = new JSONObject(response);
+    private String getForcastByLocation(String lat, String lon){
+        // Create a temporary request queue; it will be destroyed when this function exists, but
+        // that's okay because we'll block until each request is completed using RequestFuture.get()
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        String forecast = "";
 
 
-                            newurl = obj.getJSONObject("properties").getString("forecast");
-                            textBox.setText(newurl);
+        // Create request #1 (Get the points URL for a given Lat/Lon)
+        String URL =("https://api.weather.gov/points/" + lat + "," + lon);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, new JSONObject(), future, future);
+        requestQueue.add(request);
+        try {
+            // get() is a blocking call (meaning, it won't return until it finishes, or throws an exception)
+            JSONObject obj = future.get();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                textBox.setText("That didn't work!");
-            }
-        });
-
-
-// Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-        StringRequest secondRequest = new StringRequest(Request.Method.GET, newurl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject obj = new JSONObject(response).getJSONObject("properties");
-                    JSONArray arr = obj.getJSONArray("periods");
-                    obj = arr.getJSONObject(0);
-                    String forecast = obj.getString("detailedForecast");
-                    textBox.setText(forecast);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                textBox.setText("That didn't work!");
-            }
-        });
-        if (newurl != null){
-            queue.add(secondRequest);
+            // Parse the JSON response to pull out the forecast detail
+            URL = obj.getJSONObject("properties").getString("forecast");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
+        // Create Request #2 to get the forecast from the URL generated by the previous request
+        future = RequestFuture.newFuture();
+        request = new JsonObjectRequest(Request.Method.GET, URL, new JSONObject(), future, future);
+        requestQueue.add(request);
+        try {
+            // get() is a blocking call (meaning, it won't return until it finishes, or throws an exception)
+            JSONObject obj = future.get();
+            // Parse the JSON response to pull out the forecast details
+            forecast = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("detailedForecast");
+            name = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name");
+            temperature = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
+            windSpeed = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windSpeed");
+            windDirection = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windDirection");
+            isDay = Boolean.parseBoolean(obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name"));
+            presentConditions = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("shortForecast");
 
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
+        return forecast;
     }
 
+    public void getWeather(View view) {
+
+        setContentView(R.layout.activity_main);
+        final TextView longForecastView = findViewById(R.id.longForecastView);
+        final TextView conditionsView = findViewById(R.id.shortForecastView);
+        final TextView nameView = findViewById(R.id.nameView);
+        final TextView temperatureView = findViewById(R.id.tempView);
+
+
+        // Define a temporary thread to handle the weather query in the background
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Test values for my dumb emulator
+                //lat = "39.745";
+                //lon = "-97.089";
+
+                // Get the forecast and populate the text box within the thread
+                String forecast = getForcastByLocation(lat, lon);
+                longForecastView.setText(forecast);
+                //nameView.setText(name);
+                //temperatureView.setText(temperature);
+                //conditionsView.setText(presentConditions);
+
+            }
+        });
+
+        // Launch the thread
+        thread.start();
+    }
+}
