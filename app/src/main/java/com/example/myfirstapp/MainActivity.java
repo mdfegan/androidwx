@@ -133,7 +133,19 @@ public class MainActivity extends AppCompatActivity {
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
+        StringRequest secondRequest = new StringRequest(Request.Method.GET, newurl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    String forecast = obj.getJSONArray("period").getJSONObject(1).getString("detailedForecast");
+                    textBox.setText(forecast);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+            }
+        })
 
         }
 
