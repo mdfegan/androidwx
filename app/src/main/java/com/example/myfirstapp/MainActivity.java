@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 try {
-                    JSONObject obj = new JSONObject(response);
+                    JSONObject obj = new JSONObject(response).getJSONObject("properties");
                     JSONArray arr = obj.getJSONArray("periods");
                     obj = arr.getJSONObject(1);
                     String forecast = obj.getString("detailedForecast");
