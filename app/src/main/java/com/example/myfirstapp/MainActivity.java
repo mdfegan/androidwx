@@ -154,7 +154,10 @@ public class MainActivity extends AppCompatActivity {
                 textBox.setText("That didn't work!");
             }
         });
-        queue.add(secondRequest);
+        if (newurl != null){
+            queue.add(secondRequest);
+        }
+
 
 
         }
