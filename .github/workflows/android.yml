@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, Probably-Broken ]
   pull_request:
     branches: [ master ]
 
