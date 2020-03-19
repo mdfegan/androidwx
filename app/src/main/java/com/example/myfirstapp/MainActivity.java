@@ -138,14 +138,16 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONObject obj = new JSONObject(response);
-                    String forecast = obj.getJSONArray("period").getJSONObject(1).getString("detailedForecast");
+                    JSONArray arr = obj.getJSONArray("period");
+                    obj = arr.getJSONObject(1);
+                    String forecast = obj.getString("detailedForecast");
                     textBox.setText(forecast);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
             }
-        })
+        });
 
         }
 
