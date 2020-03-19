@@ -145,36 +145,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getWeather(View view) {
-
-
-
-
         // Define a temporary thread to handle the weather query in the background
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                setContentView(R.layout.activity_main);
                 final TextView longForecastView = findViewById(R.id.longForecastView);
-                final TextView conditionsView = findViewById(R.id.shortForecastView);
-                final TextView nameView = findViewById(R.id.nameView);
-                final TextView temperatureView = findViewById(R.id.tempView);
+
                 // Test values for my dumb emulator
                 //lat = "39.745";
                 //lon = "-97.089";
 
                 // Get the forecast and populate the text box within the thread
                 String forecast = getForcastByLocation(lat, lon);
-                String temp = null;
-                try {
-                    temp = wholeResponse.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                temperatureView.setText(temp);
                 longForecastView.setText(forecast);
-                //nameView.setText(name);
-                //temperatureView.setText(temperature);
-                //conditionsView.setText(presentConditions);
 
             }
         });
