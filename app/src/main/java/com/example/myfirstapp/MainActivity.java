@@ -34,21 +34,12 @@ public class MainActivity extends AppCompatActivity {
     public static String lon = null;
     public static String acc = null;
     public String newurl = null;
-    public String name = null;
-    public Boolean isDay = null;
-    public String temperature = null;
-    public String windSpeed = null;
-    public String windDirection = null;
-    public String presentConditions = null;
-    public JSONObject wholeResponse = null;
 
     private FusedLocationProviderClient fusedLocationClient;
 
     public void GetLocation(){
 
         setContentView(R.layout.activity_main);
-        final TextView box = findViewById(R.id.longForecastView);
-
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -83,13 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         GetLocation();
 
-    }
 
-    //called when the user taps the send button
-    public void sendMessage(View view){
-        //do something after the button gets tapped.
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        startActivity(intent);
     }
 
 
@@ -175,14 +160,42 @@ public class MainActivity extends AppCompatActivity {
         return temperature;
     }
 
+
+    private String getWind(JSONObject obj){
+        String wind = "Error";
+        String windDir = "Error";
+        try {
+            wind = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windSpeed");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            windDir = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windDirection");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return windDir + " at " + wind;
+    }
+
+    private String getNextPeriodTitle(JSONObject obj){
+        String title = "Error";
+        try {
+            title = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(1).getString("name");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return title;
+    }
+
     public void getWeather(View view) {
         // Define a temporary thread to handle the weather query in the background
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                final TextView longForecastView = findViewById(R.id.longForecastView);
                 final TextView shortForecastView = findViewById(R.id.shortForecastView);
                 final TextView tempView = findViewById(R.id.tempView);
+                final TextView windView = findViewById(R.id.windConditions);
+                final TextView nextTitleView = findViewById(R.id.nextTitle);
 
                 // Test values for my dumb emulator
                 //lat = "39.745";
@@ -190,14 +203,15 @@ public class MainActivity extends AppCompatActivity {
 
                 // Get the forecast and populate the text box within the thread
                 JSONObject forecast = getForcastByLocation(lat, lon);
-                String detailedForecast = getLongForecast(forecast);
                 String shortForecast = getConditions(forecast);
                 String temp = getTemp(forecast);
+                String windConditions = getWind(forecast);
+                String nextTitle = getNextPeriodTitle(forecast);
                 //longForecastView.setText(forecast.getJSONObject());
-                longForecastView.setText(detailedForecast);
                 shortForecastView.setText(shortForecast);
                 tempView.setText(temp);
-
+                windView.setText("Wind: " + windConditions);
+                nextTitleView.setText(nextTitle);
             }
         });
 
