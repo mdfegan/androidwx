@@ -30,6 +30,7 @@
         android:layout_width="370dp"
         android:layout_height="80dp"
         android:fontFamily="sans-serif-light"
+        android:gravity="center_horizontal|center_vertical"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="30sp"
@@ -45,6 +46,7 @@
         android:id="@+id/windConditions"
         android:layout_width="293dp"
         android:layout_height="36dp"
+        android:onClick="testDrawTextView"
         android:text="wind"
         android:textAlignment="center"
         android:textColor="@android:color/white"
@@ -52,6 +54,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shortForecastView" />
+
+    <LinearLayout
+        android:id="@+id/newLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/windConditions"></LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

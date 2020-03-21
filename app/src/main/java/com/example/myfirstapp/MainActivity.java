@@ -1,11 +1,14 @@
 package com.example.myfirstapp;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Intent;
 import android.location.Location;
@@ -25,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.concurrent.ExecutionException;
 
@@ -204,10 +208,53 @@ public class MainActivity extends AppCompatActivity {
                 shortForecastView.setText(shortForecast);
                 tempView.setText(temp);
                 windView.setText("Wind: " + windConditions);
+
             }
         });
 
         // Launch the thread
         thread.start();
+    }
+
+    public void testDrawTextView(View view) {
+        //this would iterate through each available period in the returned weather data, adding a new line for each period. Ideally the formatting would look cleaner in the final version.
+        for (Integer i = 0; i < 5; i++) {
+            addWxPeriod(view, "Tonight", "84 - 60", "8 to 10 mph", "Cloudy");
+        }
+    }
+
+    public void addWxPeriod(View view, String title, String temp, String wind, String shortForecast){
+        LinearLayout layout = findViewById(R.id.newLayout);
+        LinearLayout horizLayout = new LinearLayout(this);
+        horizLayout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.addView(horizLayout);
+
+        final TextView titleView = new TextView(this);
+        titleView.setTextSize(24);
+        titleView.setTextColor(Color.WHITE);
+        titleView.setText(title);
+        titleView.setPaddingRelative(16, 16, 16, 16);
+        horizLayout.addView(titleView);
+
+        final TextView shortForecastView = new TextView(this);
+        shortForecastView.setTextSize(16);
+        shortForecastView.setTextColor(Color.WHITE);
+        shortForecastView.setText(wind);
+        shortForecastView.setPaddingRelative(16, 16, 16, 16);
+        horizLayout.addView(shortForecastView);
+
+        final TextView tempView = new TextView(this);
+        tempView.setTextSize(16);
+        tempView.setTextColor(Color.WHITE);
+        tempView.setText(temp);
+        tempView.setPaddingRelative(16, 16, 16, 16);
+        horizLayout.addView(tempView);
+
+        final TextView windView = new TextView(this);
+        windView.setTextSize(16);
+        windView.setTextColor(Color.WHITE);
+        windView.setText(wind);
+        windView.setPaddingRelative(16, 16, 16, 16);
+        horizLayout.addView(windView);
     }
 }
