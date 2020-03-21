@@ -115,12 +115,6 @@ public class MainActivity extends AppCompatActivity {
             JSONObject obj = future.get();
             // Parse the JSON response to pull out the forecast details
             wholeResponse = obj;
-/*            name = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name");
-            temperature = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("temperature");
-            windSpeed = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windSpeed");
-            windDirection = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("windDirection");
-            isDay = Boolean.parseBoolean(obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("name"));
-            presentConditions = obj.getJSONObject("properties").getJSONArray("periods").getJSONObject(0).getString("shortForecast");*/
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -195,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 final TextView shortForecastView = findViewById(R.id.shortForecastView);
                 final TextView tempView = findViewById(R.id.tempView);
                 final TextView windView = findViewById(R.id.windConditions);
-                final TextView nextTitleView = findViewById(R.id.nextTitle);
 
                 // Test values for my dumb emulator
                 //lat = "39.745";
@@ -211,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                 shortForecastView.setText(shortForecast);
                 tempView.setText(temp);
                 windView.setText("Wind: " + windConditions);
-                nextTitleView.setText(nextTitle);
             }
         });
 

@@ -18,7 +18,7 @@
         android:onClick="getWeather"
         android:text="Temp"
         android:textAlignment="center"
-        android:textColor="@android:color/primary_text_light"
+        android:textColor="@android:color/white"
         android:textSize="80sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,13 +27,15 @@
 
     <TextView
         android:id="@+id/shortForecastView"
-        android:layout_width="338dp"
-        android:layout_height="44dp"
+        android:layout_width="370dp"
+        android:layout_height="80dp"
         android:fontFamily="sans-serif-light"
         android:textAlignment="center"
-        android:textColor="@android:color/primary_text_light"
+        android:textColor="@android:color/white"
         android:textSize="30sp"
         android:textStyle="italic"
+        app:autoSizeMaxTextSize="30sp"
+        app:autoSizeMinTextSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tempView"
@@ -45,35 +47,11 @@
         android:layout_height="36dp"
         android:text="wind"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shortForecastView" />
-
-    <TextView
-        android:id="@+id/nextTitle"
-        android:layout_width="187dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="16dp"
-        android:text="Later"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="12dp"
-        android:background="?android:attr/listDivider"
-        android:foreground="@color/textDark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/windConditions" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
