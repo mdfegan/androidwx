@@ -228,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout horizLayout = new LinearLayout(this);
         horizLayout.setOrientation(LinearLayout.HORIZONTAL);
         layout.addView(horizLayout);
+        LinearLayout vertLayout = new LinearLayout(this);
+        vertLayout.setOrientation(LinearLayout.VERTICAL);
+
 
         final TextView titleView = new TextView(this);
         titleView.setTextSize(24);
@@ -236,25 +239,27 @@ public class MainActivity extends AppCompatActivity {
         titleView.setPaddingRelative(16, 16, 16, 16);
         horizLayout.addView(titleView);
 
+        horizLayout.addView(vertLayout);
+
         final TextView shortForecastView = new TextView(this);
         shortForecastView.setTextSize(16);
         shortForecastView.setTextColor(Color.WHITE);
         shortForecastView.setText(wind);
         shortForecastView.setPaddingRelative(16, 16, 16, 16);
-        horizLayout.addView(shortForecastView);
+        vertLayout.addView(shortForecastView);
 
         final TextView tempView = new TextView(this);
         tempView.setTextSize(16);
         tempView.setTextColor(Color.WHITE);
         tempView.setText(temp);
         tempView.setPaddingRelative(16, 16, 16, 16);
-        horizLayout.addView(tempView);
+        vertLayout.addView(tempView);
 
         final TextView windView = new TextView(this);
         windView.setTextSize(16);
         windView.setTextColor(Color.WHITE);
         windView.setText(wind);
         windView.setPaddingRelative(16, 16, 16, 16);
-        horizLayout.addView(windView);
+        vertLayout.addView(windView);
     }
 }
